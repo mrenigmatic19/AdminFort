@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-require("../database")
+require("../db")
 
 const userschema = new mongoose.Schema({
     Name : {
@@ -12,18 +12,23 @@ const userschema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    contact: {
-        type: Number,
+    Contact: {
+        type: String,
         required:true,
-        unique:true
+        unique:false
        
     },
     Password: {
         type: String,
         required:true,
         unique:false
+    },
+    Role:{
+        type:String,
+        required:true,
+        unique:false
     }
 
     })
-    const user_info=new mongoose.model("user_info",userschema)
+    const user_info=new mongoose.model("userinfo",userschema,"userinfo")
 module.exports=user_info

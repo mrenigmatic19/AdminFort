@@ -1,5 +1,7 @@
-const express = require('express')
-
+const express = require('express');
+const bcrypt = require('bcrypt')
+const user_info = require('../database/userschema');
+require("../db")
 
 
 const getAdmin = async (req,res) => {
@@ -7,24 +9,35 @@ const getAdmin = async (req,res) => {
     };
 
 const postAdmin = async (req,res) => {
-    try {
-        const appointmentRepository = getRepository(AppointmentInfo);
-        const newAppointment = appointmentRepository.create({
-          hospitalid: req.session.loginhid,
-          doctor: req.body.doctor,
-          specialist: req.body.specialist,
-          cost: req.body.cost,
-          yoe: req.body.yoe,
-          bookingslot: req.body.bookingslot,
-        });
-    
-        await appointmentRepository.save(newAppointment);
-    
-        req.flash('msg', 'Successfully Registered');
-        res.redirect('/appointments');
-      } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
+  try{
+
+    const chk = await user_info.findOne({UserID:req.body.user})
+
+    if(!chk){
+    const hashpwd=await bcrypt.hash(req.body.password,12)
+          const newuserreg= new user_info({
+              UserID :req.body.user,
+              Name:'abc',
+              Role:req.body.role,
+              Password:hashpwd,
+              Contact:'1234567890'
+          })
+        
+          await user_info.insertMany([newuserreg])
+          req.flash('msg','Successfully Registered')
+          res.redirect("admin")
+
+      }
+      else{
+
+          req.flash('msg','Already Registered')
+          res.redirect("admin")
+
+      }
+    }catch(e){
+        console.log(e)
+      req.flash('msg','Enter Full details')
+      res.redirect("admin")
       }
     };
 

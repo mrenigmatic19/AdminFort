@@ -1,31 +1,19 @@
 const express = require('express')
-
-
+const user_info=require('../database/userschema')
 
 const getControl = async (req,res) => {
-    res.render('control')
-    };
+     user_info.find().then((data)=>{
+      console.log(data)
+      res.render('control',{message:req.flash('msg'),data:data})
+     }).catch((e)=>{
+      console.log(e)
+     })
+ 
+      
+}
 
 const postControl = async (req,res) => {
-    try {
-        const appointmentRepository = getRepository(AppointmentInfo);
-        const newAppointment = appointmentRepository.create({
-          hospitalid: req.session.loginhid,
-          doctor: req.body.doctor,
-          specialist: req.body.specialist,
-          cost: req.body.cost,
-          yoe: req.body.yoe,
-          bookingslot: req.body.bookingslot,
-        });
     
-        await appointmentRepository.save(newAppointment);
-    
-        req.flash('msg', 'Successfully Registered');
-        res.redirect('/appointments');
-      } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
-      }
     };
 
 module.exports= {getControl,postControl}
